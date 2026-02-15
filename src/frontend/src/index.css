@@ -1,0 +1,115 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    :root {
+        --radius: 0.25rem;
+        /* Futuristic light theme - clean whites with cyan accents */
+        --background: 0.98 0 0;
+        --foreground: 0.15 0 0;
+        --card: 1 0 0;
+        --card-foreground: 0.15 0 0;
+        --popover: 1 0 0;
+        --popover-foreground: 0.15 0 0;
+        --primary: 0.55 0.18 195;
+        --primary-foreground: 1 0 0;
+        --secondary: 0.92 0.02 195;
+        --secondary-foreground: 0.15 0 0;
+        --muted: 0.94 0 0;
+        --muted-foreground: 0.50 0 0;
+        --accent: 0.70 0.20 285;
+        --accent-foreground: 1 0 0;
+        --destructive: 0.60 0.24 25;
+        --destructive-foreground: 1 0 0;
+        --border: 0.88 0.02 195;
+        --input: 0.88 0.02 195;
+        --ring: 0.55 0.18 195;
+        --success: 0.65 0.18 145;
+        --warning: 0.70 0.20 65;
+        --neon-cyan: 0.75 0.25 195;
+        --neon-magenta: 0.70 0.28 330;
+        --glass-bg: 1 0 0 / 0.7;
+        --glass-border: 0.90 0.05 195 / 0.3;
+    }
+
+    .dark {
+        /* Futuristic dark theme - deep blacks with neon cyan/magenta */
+        --background: 0.10 0 0;
+        --foreground: 0.95 0 0;
+        --card: 0.14 0.02 240;
+        --card-foreground: 0.95 0 0;
+        --popover: 0.12 0.02 240;
+        --popover-foreground: 0.95 0 0;
+        --primary: 0.75 0.25 195;
+        --primary-foreground: 0.10 0 0;
+        --secondary: 0.20 0.05 240;
+        --secondary-foreground: 0.95 0 0;
+        --muted: 0.18 0.03 240;
+        --muted-foreground: 0.60 0 0;
+        --accent: 0.70 0.28 330;
+        --accent-foreground: 0.95 0 0;
+        --destructive: 0.65 0.26 25;
+        --destructive-foreground: 0.95 0 0;
+        --border: 0.25 0.05 240;
+        --input: 0.25 0.05 240;
+        --ring: 0.75 0.25 195;
+        --success: 0.70 0.22 145;
+        --warning: 0.75 0.24 65;
+        --neon-cyan: 0.80 0.28 195;
+        --neon-magenta: 0.75 0.30 330;
+        --glass-bg: 0.12 0.02 240 / 0.6;
+        --glass-border: 0.30 0.10 195 / 0.4;
+    }
+
+    * {
+        @apply border-border;
+    }
+    
+    body {
+        @apply bg-background text-foreground;
+        font-feature-settings: "rlig" 1, "calt" 1;
+    }
+}
+
+@layer utilities {
+    .glass-panel {
+        background: oklch(var(--glass-bg));
+        border: 1px solid oklch(var(--glass-border));
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+    }
+    
+    .neon-glow {
+        box-shadow: 0 0 20px oklch(var(--neon-cyan) / 0.3),
+                    0 0 40px oklch(var(--neon-cyan) / 0.1);
+    }
+    
+    .neon-text {
+        text-shadow: 0 0 10px oklch(var(--neon-cyan) / 0.5);
+    }
+    
+    .scanline {
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .scanline::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: linear-gradient(90deg, 
+            transparent, 
+            oklch(var(--neon-cyan) / 0.3), 
+            transparent);
+        animation: scan 3s linear infinite;
+    }
+    
+    @keyframes scan {
+        0% { transform: translateY(0); }
+        100% { transform: translateY(100vh); }
+    }
+}

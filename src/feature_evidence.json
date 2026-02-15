@@ -1,0 +1,24 @@
+{
+  "kind": "feature_evidence_report",
+  "features": [
+    {
+      "featureId": "feature-audit-the-entire-frontend-for-any-remaining-user-facing-occurrences-of-the-strings-instamart-or-instamart-including-headings-button-labels-helper-text-empty-states-dialogs-alt-text-aria-labels-metadata-and-any-other-displayed-copy-and-replace-them-with-mylocal-kart-so-the-brand-name-never-appears-as-instamart-anywhere-in-the-ui",
+      "featureTitle": "Audit the entire frontend for any remaining user-facing occurrences of the strings “Instamart” or “InstaMart” (including headings, button labels, helper text, empty states, dialogs, alt text/aria-labels, metadata, and any other displayed copy) and replace them with “MyLocal Kart” so the brand name never appears as Instamart anywhere in the UI.",
+      "files": [
+        "frontend/src/components/auth/ProfileSetupModal.tsx"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-13"
+      ],
+      "confidence": "high"
+    }
+  ]
+}

@@ -1,0 +1,43 @@
+{
+  "kind": "implementation_plan",
+  "version": "1.0",
+  "title": "Remove legacy “Instamart” copy and enforce consistent “MyLocal Kart” branding (frontend)",
+  "requirements": [
+    {
+      "id": "REQ-13",
+      "summary": "Replace any remaining user-facing “Instamart”/“InstaMart” strings across the frontend UI (including accessibility labels and metadata) with “MyLocal Kart”.",
+      "acceptanceCriteria": [
+        "Navigating the app as guest/customer/vendor/admin shows “MyLocal Kart” consistently and does not display “Instamart”/“InstaMart” anywhere in visible UI text (including dialogs/toasts/empty states).",
+        "The HTML document title and any other user-visible metadata rendered in the UI uses “MyLocal Kart” (not “Instamart”/“InstaMart”).",
+        "All image alt text and other accessibility labels that are user-facing use “MyLocal Kart” and do not contain “Instamart”/“InstaMart”."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/auth/ProfileSetupModal.tsx",
+          "operation": "modify",
+          "description": "Update the dialog title copy to remove the legacy “InstaMart” brand string (e.g., change “Welcome to InstaMart!” to “Welcome to MyLocal Kart!”) and verify any other user-facing strings/labels in this modal do not contain “Instamart”/“InstaMart”. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/index.html",
+          "operation": "modify",
+          "description": "Audit and ensure the document <title> and any user-visible metadata does not include “Instamart”/“InstaMart” and is consistently branded as “MyLocal Kart”."
+        },
+        {
+          "path": "frontend/src/components/storefront/StorefrontHero.tsx",
+          "operation": "modify",
+          "description": "Audit hero section copy and all accessibility text (alt/aria) to ensure there are no remaining “Instamart”/“InstaMart” strings and that branding text reads “MyLocal Kart” where applicable."
+        },
+        {
+          "path": "frontend/src/components/brand/Logo.tsx",
+          "operation": "modify",
+          "description": "Audit and confirm the displayed brand text and logo alt text consistently use “MyLocal Kart” (and do not include “Instamart”/“InstaMart”)."
+        },
+        {
+          "path": "frontend/src/App.tsx",
+          "operation": "modify",
+          "description": "Perform an app-wide audit of user-facing copy rendered from the root component tree (including toasts/dialog triggers/empty states) to ensure no “Instamart”/“InstaMart” strings remain and only “MyLocal Kart” appears as the brand name."
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "kind": "spec_vs_diff_report",
+  "version": "1.0",
+  "generatedAt": "2026-02-15T15:03:02.410Z",
+  "summary": "The diff updates branding text in `ProfileSetupModal.tsx` to “MyLocal Kart”, but there is not enough evidence that the entire frontend was audited and fully purged of all “Instamart”/“InstaMart” occurrences (including document title/metadata and accessibility labels) as required by REQ-13.",
+  "missing_requirements": [
+    {
+      "id": "REQ-13",
+      "requirement": "Audit the entire frontend for any remaining user-facing occurrences of “Instamart”/“InstaMart” (including headings, buttons, helper text, empty states, dialogs, alt/aria labels, metadata/document title, and any displayed copy) and replace them with “MyLocal Kart” everywhere.",
+      "reason": "Only one frontend component (`ProfileSetupModal.tsx`) is shown as modified with “MyLocal Kart” text. The diff does not show changes to other UI surfaces or to HTML document title/metadata and accessibility labels across the app, so the required comprehensive audit/replacement is not evidenced.",
+      "evidence": [
+        "frontend/src/components/auth/ProfileSetupModal.tsx",
+        "frontend-file-summaries.txt (truncated)"
+      ]
+    }
+  ],
+  "hallucinated_features": [],
+  "confidence": 0.62,
+  "changed_files": [
+    "frontend-file-summaries.txt",
+    "frontend/src/components/auth/ProfileSetupModal.tsx",
+    "project_state.json"
+  ]
+}

@@ -1,2 +1,3 @@
-# instamart-like-grocery-catalog-with-futuristic-ui-and-item-availability-manageme
-Exported from Caffeine project: MyLocal Kart
+## 
+
+To run app build and run docker image: `docker build -t app . docker run -it --network host app`

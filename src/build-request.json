@@ -1,0 +1,38 @@
+{
+  "kind": "build_request",
+  "title": "Remove any remaining “Instamart” wording and ensure consistent “MyLocal Kart” branding",
+  "priority": "normal",
+  "requirements": [
+    {
+      "id": "REQ-13",
+      "text": "Audit the entire frontend for any remaining user-facing occurrences of the strings “Instamart” or “InstaMart” (including headings, button labels, helper text, empty states, dialogs, alt text/aria-labels, metadata, and any other displayed copy) and replace them with “MyLocal Kart” so the brand name never appears as Instamart anywhere in the UI.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-4"
+        ],
+        "quotes": [
+          "All looks good and let there no name of Instamart pop up any where it should show as \"MyLocal Kart\""
+        ]
+      },
+      "acceptanceCriteria": [
+        "Navigating the app as guest/customer/vendor/admin shows “MyLocal Kart” consistently and does not display “Instamart”/“InstaMart” anywhere in visible UI text (including dialogs/toasts/empty states).",
+        "The HTML document title and any other user-visible metadata rendered in the UI uses “MyLocal Kart” (not “Instamart”/“InstaMart”).",
+        "All image alt text and other accessibility labels that are user-facing use “MyLocal Kart” and do not contain “Instamart”/“InstaMart”."
+      ]
+    }
+  ],
+  "constraints": [
+    "Do not edit files under frontend/src/components/ui or any paths listed in frontend.immutablePaths.",
+    "Use English for any user-facing text.",
+    "Do not introduce any new branding names; the only brand name displayed to users must be “MyLocal Kart”."
+  ],
+  "nonGoals": [
+    "Renaming internal asset filenames/paths that are not user-facing (e.g., existing image filenames containing legacy terms) unless those filenames are surfaced to users.",
+    "Changing the app’s features, flows, or authorization model beyond updating displayed text/labels."
+  ],
+  "imageRequirements": {
+    "required": [],
+    "edits": []
+  }
+}
