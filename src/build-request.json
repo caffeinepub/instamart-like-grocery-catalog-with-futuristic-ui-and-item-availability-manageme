@@ -1,38 +1,63 @@
 {
   "kind": "build_request",
-  "title": "Remove any remaining “Instamart” wording and ensure consistent “MyLocal Kart” branding",
+  "title": "Update app logo image and show Customer/Vendor login options when clicking the logo",
   "priority": "normal",
   "requirements": [
     {
-      "id": "REQ-13",
-      "text": "Audit the entire frontend for any remaining user-facing occurrences of the strings “Instamart” or “InstaMart” (including headings, button labels, helper text, empty states, dialogs, alt text/aria-labels, metadata, and any other displayed copy) and replace them with “MyLocal Kart” so the brand name never appears as Instamart anywhere in the UI.",
+      "id": "REQ-26",
+      "text": "Replace the current header logo image with a new static logo asset, and keep the displayed brand text as exactly “MyLocal Kart”.",
       "target": "frontend",
       "source": {
         "messageIds": [
           "msg-4"
         ],
         "quotes": [
-          "All looks good and let there no name of Instamart pop up any where it should show as \"MyLocal Kart\""
+          "change the logo image of the app"
         ]
       },
       "acceptanceCriteria": [
-        "Navigating the app as guest/customer/vendor/admin shows “MyLocal Kart” consistently and does not display “Instamart”/“InstaMart” anywhere in visible UI text (including dialogs/toasts/empty states).",
-        "The HTML document title and any other user-visible metadata rendered in the UI uses “MyLocal Kart” (not “Instamart”/“InstaMart”).",
-        "All image alt text and other accessibility labels that are user-facing use “MyLocal Kart” and do not contain “Instamart”/“InstaMart”."
+        "A new logo image file exists under frontend/public/assets/generated and is used by the header logo component.",
+        "The logo image rendered in the header no longer uses /assets/generated/mylocal-kart-upload-logo.dim_256x256.png.",
+        "The visible brand text next to the logo reads exactly “MyLocal Kart”.",
+        "The logo <img> has an English alt text that refers to “MyLocal Kart” (e.g., “MyLocal Kart Logo”)."
+      ]
+    },
+    {
+      "id": "REQ-27",
+      "text": "Make the header logo symbol clickable so that when the user is not authenticated, clicking the logo opens a small login chooser that lets the user select either Customer or Vendor mode and then initiate login for the selected mode.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-4"
+        ],
+        "quotes": [
+          "let the login option be for both vendor and customer. when they click at the symbol."
+        ]
+      },
+      "acceptanceCriteria": [
+        "When logged out, clicking the logo (image/symbol area) opens an on-screen UI (popover/dropdown/dialog) that shows both options: “Customer” and “Vendor”.",
+        "Selecting “Customer” or “Vendor” updates the auth mode used by the existing login flow.",
+        "The login action is available from that UI and uses the same Internet Identity login flow as the existing LoginButton.",
+        "The login chooser UI uses English labels (“Customer”, “Vendor”, and a login call-to-action in English).",
+        "The existing standalone ModeSelector in the header is removed or hidden when logged out, so the primary way to choose mode is via clicking the logo symbol.",
+        "When logged in, clicking the logo does not block normal navigation/behavior (e.g., it can behave as a home link or do nothing), and does not force a mode change."
       ]
     }
   ],
   "constraints": [
-    "Do not edit files under frontend/src/components/ui or any paths listed in frontend.immutablePaths.",
-    "Use English for any user-facing text.",
-    "Do not introduce any new branding names; the only brand name displayed to users must be “MyLocal Kart”."
+    "Do not modify files under frontend/src/components/ui (Shadcn UI components); only compose them.",
+    "Do not modify immutable hook files (frontend/src/hooks/useInternetIdentity.ts, frontend/src/hooks/useActor.ts, frontend/src/main.tsx).",
+    "Keep all user-facing text in English."
   ],
   "nonGoals": [
-    "Renaming internal asset filenames/paths that are not user-facing (e.g., existing image filenames containing legacy terms) unless those filenames are surfaced to users.",
-    "Changing the app’s features, flows, or authorization model beyond updating displayed text/labels."
+    "Implementing new authentication providers beyond Internet Identity.",
+    "Changing backend authorization or role logic.",
+    "Redesigning the storefront hero or other branding assets beyond the header logo image."
   ],
   "imageRequirements": {
-    "required": [],
+    "required": [
+      "Futuristic grocery-themed monogram/logo mark with neon-green accents on dark background (mylocal-kart-logo-v2.dim_256x256.png)"
+    ],
     "edits": []
   }
 }

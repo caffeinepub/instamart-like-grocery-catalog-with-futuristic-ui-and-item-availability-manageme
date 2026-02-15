@@ -1,6 +1,7 @@
 import { useInternetIdentity } from './hooks/useInternetIdentity';
 import { useGetCallerUserProfile } from './hooks/auth/useCallerProfile';
 import { useCallerRole } from './hooks/auth/useCallerRole';
+import { CartProvider } from './hooks/cart/useCart';
 import Header from './components/layout/Header';
 import Footer from './components/layout/Footer';
 import ProfileSetupModal from './components/auth/ProfileSetupModal';
@@ -34,34 +35,36 @@ export default function App() {
 
   return (
     <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
-      <div className="min-h-screen flex flex-col bg-background">
-        <Header />
-        
-        <main className="flex-1">
-          <StorefrontHero />
+      <CartProvider>
+        <div className="min-h-screen flex flex-col bg-background">
+          <Header />
           
-          {isAdmin && (
-            <section className="container mx-auto px-4 py-8">
-              <AdminPanel />
+          <main className="flex-1">
+            <StorefrontHero />
+            
+            {isAdmin && (
+              <section className="container mx-auto px-4 py-8">
+                <AdminPanel />
+              </section>
+            )}
+            
+            {isVendor && !isAdmin && (
+              <section className="container mx-auto px-4 py-8">
+                <VendorPortal />
+              </section>
+            )}
+            
+            <section className="container mx-auto px-4 py-12">
+              <ProductGrid />
             </section>
-          )}
+          </main>
           
-          {isVendor && !isAdmin && (
-            <section className="container mx-auto px-4 py-8">
-              <VendorPortal />
-            </section>
-          )}
+          <Footer />
           
-          <section className="container mx-auto px-4 py-12">
-            <ProductGrid />
-          </section>
-        </main>
-        
-        <Footer />
-        
-        {showProfileSetup && <ProfileSetupModal />}
-        <Toaster />
-      </div>
+          {showProfileSetup && <ProfileSetupModal />}
+          <Toaster />
+        </div>
+      </CartProvider>
     </ThemeProvider>
   );
 }

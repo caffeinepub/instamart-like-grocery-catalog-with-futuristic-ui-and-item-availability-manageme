@@ -80,7 +80,7 @@ export default function VendorProductForm() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="space-y-2">
-          <Label htmlFor="price">Price ($) *</Label>
+          <Label htmlFor="price">Price (₹) *</Label>
           <Input
             id="price"
             type="number"
@@ -88,7 +88,7 @@ export default function VendorProductForm() {
             min="0"
             value={formData.price}
             onChange={(e) => setFormData({ ...formData, price: e.target.value })}
-            placeholder="9.99"
+            placeholder="99.00"
             required
           />
         </div>

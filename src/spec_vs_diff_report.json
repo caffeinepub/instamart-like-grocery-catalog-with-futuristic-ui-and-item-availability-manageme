@@ -1,24 +1,26 @@
 {
   "kind": "spec_vs_diff_report",
   "version": "1.0",
-  "generatedAt": "2026-02-15T15:03:02.410Z",
-  "summary": "The diff updates branding text in `ProfileSetupModal.tsx` to “MyLocal Kart”, but there is not enough evidence that the entire frontend was audited and fully purged of all “Instamart”/“InstaMart” occurrences (including document title/metadata and accessibility labels) as required by REQ-13.",
+  "generatedAt": "2026-02-15T16:02:57.306Z",
+  "summary": "REQ-27 (logo-click login chooser with Customer/Vendor mode selection and Internet Identity login) appears implemented via a new LogoLoginChooser component and Header/Logo wiring. REQ-26 is only partially implemented: the header logo component now points to the new v2 image path and uses correct brand text/alt text, but the diff does not show the required static logo asset being added under frontend/public/assets/generated.",
   "missing_requirements": [
     {
-      "id": "REQ-13",
-      "requirement": "Audit the entire frontend for any remaining user-facing occurrences of “Instamart”/“InstaMart” (including headings, buttons, helper text, empty states, dialogs, alt/aria labels, metadata/document title, and any displayed copy) and replace them with “MyLocal Kart” everywhere.",
-      "reason": "Only one frontend component (`ProfileSetupModal.tsx`) is shown as modified with “MyLocal Kart” text. The diff does not show changes to other UI surfaces or to HTML document title/metadata and accessibility labels across the app, so the required comprehensive audit/replacement is not evidenced.",
+      "id": "REQ-26",
+      "requirement": "A new logo image file exists under frontend/public/assets/generated and is used by the header logo component.",
+      "reason": "Logo.tsx references /assets/generated/mylocal-kart-logo-v2.dim_256x256.png, but the diff summary does not show any new file added under frontend/public/assets/generated, so the asset’s existence cannot be confirmed from the diff.",
       "evidence": [
-        "frontend/src/components/auth/ProfileSetupModal.tsx",
-        "frontend-file-summaries.txt (truncated)"
+        "frontend/src/components/brand/Logo.tsx (references \"/assets/generated/mylocal-kart-logo-v2.dim_256x256.png\")",
+        "File diff summary: Added files list does not include any frontend/public/assets/generated/*.png"
       ]
     }
   ],
   "hallucinated_features": [],
-  "confidence": 0.62,
+  "confidence": 0.74,
   "changed_files": [
     "frontend-file-summaries.txt",
-    "frontend/src/components/auth/ProfileSetupModal.tsx",
+    "frontend/src/components/auth/LogoLoginChooser.tsx",
+    "frontend/src/components/brand/Logo.tsx",
+    "frontend/src/components/layout/Header.tsx",
     "project_state.json"
   ]
 }

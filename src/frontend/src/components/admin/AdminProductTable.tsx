@@ -9,6 +9,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import ConfirmDialog from './ConfirmDialog';
 import { Trash2, AlertCircle } from 'lucide-react';
 import { toast } from 'sonner';
+import { formatINR } from '../../utils/currency';
 
 export default function AdminProductTable() {
   const { data: products, isLoading, error } = useGetAllProducts();
@@ -93,7 +94,6 @@ export default function AdminProductTable() {
           </TableHeader>
           <TableBody>
             {products.map((product) => {
-              const price = Number(product.price) / 100;
               return (
                 <TableRow key={product.id.toString()}>
                   <TableCell>
@@ -115,7 +115,7 @@ export default function AdminProductTable() {
                   </TableCell>
                   <TableCell>
                     <div className="font-semibold">
-                      ${price.toFixed(2)}
+                      {formatINR(product.price)}
                       {product.unitLabel && (
                         <span className="text-sm text-muted-foreground ml-1">
                           / {product.unitLabel}

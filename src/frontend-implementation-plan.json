@@ -1,41 +1,56 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Remove legacy “Instamart” copy and enforce consistent “MyLocal Kart” branding (frontend)",
+  "title": "Header logo asset update and logo-click login mode chooser",
   "requirements": [
     {
-      "id": "REQ-13",
-      "summary": "Replace any remaining user-facing “Instamart”/“InstaMart” strings across the frontend UI (including accessibility labels and metadata) with “MyLocal Kart”.",
+      "id": "REQ-26",
+      "summary": "Update the header logo to use the new static asset while keeping the brand text exactly “MyLocal Kart” and an English alt text.",
       "acceptanceCriteria": [
-        "Navigating the app as guest/customer/vendor/admin shows “MyLocal Kart” consistently and does not display “Instamart”/“InstaMart” anywhere in visible UI text (including dialogs/toasts/empty states).",
-        "The HTML document title and any other user-visible metadata rendered in the UI uses “MyLocal Kart” (not “Instamart”/“InstaMart”).",
-        "All image alt text and other accessibility labels that are user-facing use “MyLocal Kart” and do not contain “Instamart”/“InstaMart”."
+        "A new logo image file exists under frontend/public/assets/generated and is used by the header logo component.",
+        "The logo image rendered in the header no longer uses /assets/generated/mylocal-kart-upload-logo.dim_256x256.png.",
+        "The visible brand text next to the logo reads exactly “MyLocal Kart”.",
+        "The logo <img> has an English alt text that refers to “MyLocal Kart” (e.g., “MyLocal Kart Logo”)."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/components/auth/ProfileSetupModal.tsx",
-          "operation": "modify",
-          "description": "Update the dialog title copy to remove the legacy “InstaMart” brand string (e.g., change “Welcome to InstaMart!” to “Welcome to MyLocal Kart!”) and verify any other user-facing strings/labels in this modal do not contain “Instamart”/“InstaMart”. Verify the component's usage instructions before implementing."
-        },
-        {
-          "path": "frontend/index.html",
-          "operation": "modify",
-          "description": "Audit and ensure the document <title> and any user-visible metadata does not include “Instamart”/“InstaMart” and is consistently branded as “MyLocal Kart”."
-        },
-        {
-          "path": "frontend/src/components/storefront/StorefrontHero.tsx",
-          "operation": "modify",
-          "description": "Audit hero section copy and all accessibility text (alt/aria) to ensure there are no remaining “Instamart”/“InstaMart” strings and that branding text reads “MyLocal Kart” where applicable."
+          "path": "frontend/public/assets/generated/mylocal-kart-logo-v2.dim_256x256.png",
+          "operation": "create",
+          "description": "Add the required generated static logo asset at frontend/public/assets/generated/mylocal-kart-logo-v2.dim_256x256.png and ensure it is committed as a public static file."
         },
         {
           "path": "frontend/src/components/brand/Logo.tsx",
           "operation": "modify",
-          "description": "Audit and confirm the displayed brand text and logo alt text consistently use “MyLocal Kart” (and do not include “Instamart”/“InstaMart”)."
+          "description": "Update the logo <img> to use /assets/generated/mylocal-kart-logo-v2.dim_256x256.png instead of /assets/generated/mylocal-kart-upload-logo.dim_256x256.png, keep the visible brand text exactly “MyLocal Kart”, and keep an English alt text referencing “MyLocal Kart” (e.g., “MyLocal Kart Logo”)."
+        }
+      ]
+    },
+    {
+      "id": "REQ-27",
+      "summary": "Make the header logo symbol open a Customer/Vendor login chooser when logged out, updating auth mode and triggering the existing Internet Identity login flow; hide the standalone mode selector when logged out.",
+      "acceptanceCriteria": [
+        "When logged out, clicking the logo (image/symbol area) opens an on-screen UI (popover/dropdown/dialog) that shows both options: “Customer” and “Vendor”.",
+        "Selecting “Customer” or “Vendor” updates the auth mode used by the existing login flow.",
+        "The login action is available from that UI and uses the same Internet Identity login flow as the existing LoginButton.",
+        "The login chooser UI uses English labels (“Customer”, “Vendor”, and a login call-to-action in English).",
+        "The existing standalone ModeSelector in the header is removed or hidden when logged out, so the primary way to choose mode is via clicking the logo symbol.",
+        "When logged in, clicking the logo does not block normal navigation/behavior (e.g., it can behave as a home link or do nothing), and does not force a mode change."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/auth/LogoLoginChooser.tsx",
+          "operation": "create",
+          "description": "Create a small anchored chooser UI component (custom dropdown/popover UI composed in-app; do not modify files under frontend/src/components/ui) that: (1) only renders/activates when logged out, (2) shows English options “Customer” and “Vendor” that call useAuthMode().setMode(...), and (3) provides an English login call-to-action that triggers the same Internet Identity login flow as the existing LoginButton by calling useInternetIdentity().login (handle loginStatus/disabled state). Include basic outside-click/escape handling so the chooser can be dismissed."
         },
         {
-          "path": "frontend/src/App.tsx",
+          "path": "frontend/src/components/layout/Header.tsx",
           "operation": "modify",
-          "description": "Perform an app-wide audit of user-facing copy rendered from the root component tree (including toasts/dialog triggers/empty states) to ensure no “Instamart”/“InstaMart” strings remain and only “MyLocal Kart” appears as the brand name."
+          "description": "Wire the logo symbol click behavior: when not authenticated, render LogoLoginChooser so clicking the logo image/symbol opens the chooser; when authenticated, keep normal behavior and do not force a mode change. Remove or hide the standalone ModeSelector when logged out (so the primary mode selection is via clicking the logo symbol). Ensure all labels in the chooser are English."
+        },
+        {
+          "path": "frontend/src/components/brand/Logo.tsx",
+          "operation": "modify",
+          "description": "Adjust the Logo component API as needed to allow the header to make the logo image/symbol area clickable (e.g., allow injecting an onClick handler or wrapper around the <img>) without changing the visible brand text. Ensure logged-in behavior does not automatically open the chooser or change mode."
         }
       ]
     }

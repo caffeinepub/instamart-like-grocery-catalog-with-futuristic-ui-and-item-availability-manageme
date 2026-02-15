@@ -2,10 +2,10 @@
   "kind": "feature_evidence_report",
   "features": [
     {
-      "featureId": "feature-audit-the-entire-frontend-for-any-remaining-user-facing-occurrences-of-the-strings-instamart-or-instamart-including-headings-button-labels-helper-text-empty-states-dialogs-alt-text-aria-labels-metadata-and-any-other-displayed-copy-and-replace-them-with-mylocal-kart-so-the-brand-name-never-appears-as-instamart-anywhere-in-the-ui",
-      "featureTitle": "Audit the entire frontend for any remaining user-facing occurrences of the strings “Instamart” or “InstaMart” (including headings, button labels, helper text, empty states, dialogs, alt text/aria-labels, metadata, and any other displayed copy) and replace them with “MyLocal Kart” so the brand name never appears as Instamart anywhere in the UI.",
+      "featureId": "feature-replace-the-current-header-logo-image-with-a-new-static-logo-asset-and-keep-the-displayed-brand-text-as-exactly-mylocal-kart",
+      "featureTitle": "Replace the current header logo image with a new static logo asset, and keep the displayed brand text as exactly “MyLocal Kart”.",
       "files": [
-        "frontend/src/components/auth/ProfileSetupModal.tsx"
+        "frontend/src/components/brand/Logo.tsx"
       ],
       "components": [
         "authorization@4.0.0",
@@ -16,7 +16,28 @@
         "github-export-icp-cli@1.0.0"
       ],
       "testIds": [
-        "REQ-13"
+        "REQ-26"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-make-the-header-logo-symbol-clickable-so-that-when-the-user-is-not-authenticated-clicking-the-logo-opens-a-small-login-chooser-that-lets-the-user-select-either-customer-or-vendor-mode-and-then-initiate-login-for-the-selected-mode",
+      "featureTitle": "Make the header logo symbol clickable so that when the user is not authenticated, clicking the logo opens a small login chooser that lets the user select either Customer or Vendor mode and then initiate login for the selected mode.",
+      "files": [
+        "frontend/src/components/auth/LogoLoginChooser.tsx",
+        "frontend/src/components/brand/Logo.tsx",
+        "frontend/src/components/layout/Header.tsx"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-27"
       ],
       "confidence": "high"
     }

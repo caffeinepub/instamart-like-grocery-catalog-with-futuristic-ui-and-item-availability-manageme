@@ -1,14 +1,13 @@
 import Time "mo:core/Time";
 import Map "mo:core/Map";
+import List "mo:core/List";
 import Principal "mo:core/Principal";
 import Runtime "mo:core/Runtime";
-import Text "mo:core/Text";
 import Iter "mo:core/Iter";
 import Set "mo:core/Set";
 import MixinAuthorization "authorization/MixinAuthorization";
 import AccessControl "authorization/access-control";
-
-
+import Nat "mo:core/Nat";
 
 actor {
   let accessControlState = AccessControl.initState();
@@ -31,7 +30,25 @@ actor {
     name : Text;
   };
 
-  // Extended role type for frontend consumption
+  public type OrderStatus = {
+    #pending;
+    #confirmed;
+    #shipped;
+    #delivered;
+    #cancelled;
+  };
+
+  public type OrderItem = {
+    id : Nat;
+    productId : Nat;
+    name : Text;
+    price : Nat;
+    quantity : Nat;
+    imageUrl : ?Text;
+    isAvailable : Bool;
+    vendor : ?Principal;
+  };
+
   public type ExtendedRole = {
     #admin;
     #vendor;
@@ -39,26 +56,44 @@ actor {
     #guest;
   };
 
+  public type Order = {
+    id : Nat;
+    customer : Principal;
+    items : [OrderItem];
+    totalAmount : Nat;
+    createdAt : Time.Time;
+    paymentMethod : ?Text;
+    status : OrderStatus;
+    confirmationText : ?Text;
+  };
+
+  public type OrderConfirmation = {
+    orderId : Nat;
+    message : Text;
+    items : [OrderItem];
+    totalAmount : Nat;
+    createdAt : Time.Time;
+    paymentMethod : Text;
+    customer : Principal;
+    status : OrderStatus;
+  };
+
   let products = Map.empty<Nat, Product>();
   let userProfiles = Map.empty<Principal, UserProfile>();
   let vendorProducts = Map.empty<Principal, Set.Set<Nat>>();
+  let orders = Map.empty<Nat, Order>();
   var nextProductId = 1;
+  var nextOrderId = 1;
 
-  // Role determination API for frontend
   public query ({ caller }) func getCallerRole() : async ExtendedRole {
     let baseRole = AccessControl.getUserRole(accessControlState, caller);
     switch (baseRole) {
       case (#admin) { #admin };
       case (#user) {
-        // Users who have created products are vendors, others are customers
         switch (vendorProducts.get(caller)) {
           case (null) { #customer };
           case (?productSet) {
-            if (productSet.size() > 0) {
-              #vendor;
-            } else {
-              #customer;
-            };
+            if (productSet.size() > 0) { #vendor } else { #customer };
           };
         };
       };
@@ -66,7 +101,6 @@ actor {
     };
   };
 
-  // User profile management functions
   public query ({ caller }) func getCallerUserProfile() : async ?UserProfile {
     if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
       Runtime.trap("Unauthorized: Only users can access profiles");
@@ -88,7 +122,6 @@ actor {
     userProfiles.add(caller, profile);
   };
 
-  // Product catalog management functions
   public shared ({ caller }) func createProduct(
     name : Text,
     description : ?Text,
@@ -96,7 +129,6 @@ actor {
     unitLabel : ?Text,
     imageUrl : ?Text
   ) : async Nat {
-    // Only authenticated users (not guests) can create products
     if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
       Runtime.trap("Unauthorized: Only authenticated users can create products");
     };
@@ -134,7 +166,6 @@ actor {
   };
 
   public shared ({ caller }) func deleteProduct(id : Nat) : async () {
-    // Only authenticated users can delete products
     if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
       Runtime.trap("Unauthorized: Only authenticated users can delete products");
     };
@@ -143,13 +174,11 @@ actor {
       case (?product) {
         switch (product.vendor) {
           case (null) {
-            // Products without vendor can only be deleted by admins
             if (not AccessControl.isAdmin(accessControlState, caller)) {
               Runtime.trap("Unauthorized: Only admins can delete this product");
             };
           };
           case (?vendorPrincipal) {
-            // Vendors can only delete their own products, admins can delete any
             if (vendorPrincipal != caller and not AccessControl.isAdmin(accessControlState, caller)) {
               Runtime.trap("Unauthorized: You can only delete your own products");
             };
@@ -157,7 +186,6 @@ actor {
         };
         products.remove(id);
 
-        // Clean up vendor products mapping
         switch (product.vendor) {
           case (?vendorPrincipal) {
             switch (vendorProducts.get(vendorPrincipal)) {
@@ -177,7 +205,6 @@ actor {
   };
 
   public shared ({ caller }) func toggleAvailability(id : Nat) : async () {
-    // Only authenticated users can toggle availability
     if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
       Runtime.trap("Unauthorized: Only authenticated users can toggle product availability");
     };
@@ -186,13 +213,11 @@ actor {
       case (?product) {
         switch (product.vendor) {
           case (null) {
-            // Products without vendor can only be modified by admins
             if (not AccessControl.isAdmin(accessControlState, caller)) {
               Runtime.trap("Unauthorized: Only admins can modify this product");
             };
           };
           case (?vendorPrincipal) {
-            // Vendors can only modify their own products, admins can modify any
             if (vendorPrincipal != caller and not AccessControl.isAdmin(accessControlState, caller)) {
               Runtime.trap("Unauthorized: You can only toggle availability for your own products");
             };
@@ -212,17 +237,14 @@ actor {
   };
 
   public query ({ caller }) func getProduct(id : Nat) : async ?Product {
-    // Anyone (including guests) can view products
     products.get(id);
   };
 
   public query ({ caller }) func getAllProducts() : async [Product] {
-    // Anyone (including guests) can view all products
     products.values().toArray();
   };
 
   public query ({ caller }) func getProductsForVendor(vendor : Principal) : async [Product] {
-    // Anyone (including guests) can view products by vendor
     switch (vendorProducts.get(vendor)) {
       case (null) { [] };
       case (?productIds) {
@@ -247,5 +269,108 @@ actor {
         );
       };
     };
+  };
+
+  public shared ({ caller }) func checkout(cartItems : [(Nat, Nat)], paymentMethod : Text) : async OrderConfirmation {
+    if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
+      Runtime.trap("Unauthorized: Only authenticated users can place orders");
+    };
+
+    if (cartItems.size() == 0) {
+      Runtime.trap("Cart is empty. Add items to your cart before checkout.");
+    };
+
+    let orderItems = List.empty<OrderItem>();
+    var totalAmount = 0;
+
+    for ((productId, quantity) in cartItems.values()) {
+      switch (products.get(productId)) {
+        case (?product) {
+          if (not product.isAvailable) {
+            Runtime.trap("Product " # product.name # " is not available. Please remove unavailable items from your cart.");
+          };
+
+          let item : OrderItem = {
+            id = productId;
+            productId;
+            name = product.name;
+            price = product.price;
+            quantity;
+            imageUrl = product.imageUrl;
+            isAvailable = product.isAvailable;
+            vendor = product.vendor;
+          };
+
+          orderItems.add(item);
+          totalAmount += product.price * quantity;
+        };
+        case (null) {
+          Runtime.trap("Product with ID " # productId.toText() # " not found. Please remove unavailable items from your cart.");
+        };
+      };
+    };
+
+    let orderId = nextOrderId;
+    let order : Order = {
+      id = orderId;
+      customer = caller;
+      items = orderItems.toArray();
+      totalAmount;
+      createdAt = Time.now();
+      paymentMethod = ?paymentMethod;
+      status = #pending;
+      confirmationText = ?("Order successfully placed for " # totalAmount.toText() # "€ 💶");
+    };
+
+    orders.add(orderId, order);
+    nextOrderId += 1;
+
+    {
+      orderId;
+      message = "Your order (ID: " # orderId.toText() # ") has been placed. Please complete the payment process. 💶";
+      items = orderItems.toArray();
+      totalAmount;
+      createdAt = order.createdAt;
+      paymentMethod;
+      customer = caller;
+      status = #pending;
+    };
+  };
+
+  func isVendorOfOrder(caller : Principal, order : Order) : Bool {
+    for (item in order.items.values()) {
+      switch (item.vendor) {
+        case (?vendorPrincipal) {
+          if (vendorPrincipal == caller) {
+            return true;
+          };
+        };
+        case (null) {};
+      };
+    };
+    false;
+  };
+
+  public query ({ caller }) func getOrderById(orderId : Nat) : async ?Order {
+    switch (orders.get(orderId)) {
+      case (?order) {
+        if (caller == order.customer or AccessControl.isAdmin(accessControlState, caller) or isVendorOfOrder(caller, order)) {
+          ?order;
+        } else {
+          Runtime.trap("Unauthorized: You can only view your own orders, orders you are a vendor for, or be an admin");
+        };
+      };
+      case (null) { null };
+    };
+  };
+
+  public query ({ caller }) func getAllOrdersForCustomer(customerPrincipal : Principal) : async [Order] {
+    if (caller != customerPrincipal and not AccessControl.isAdmin(accessControlState, caller)) {
+      Runtime.trap("Unauthorized: You can only view your own orders");
+    };
+
+    orders.values().toArray().filter(
+      func(o) { o.customer == customerPrincipal }
+    );
   };
 };

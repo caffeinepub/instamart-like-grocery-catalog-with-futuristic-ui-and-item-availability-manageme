@@ -87,7 +87,7 @@ export default function ProductForm({ onSuccess }: ProductFormProps) {
         </div>
         
         <div className="space-y-2">
-          <Label htmlFor="price">Price ($) *</Label>
+          <Label htmlFor="price">Price (₹) *</Label>
           <Input
             id="price"
             type="number"
@@ -95,7 +95,7 @@ export default function ProductForm({ onSuccess }: ProductFormProps) {
             min="0.01"
             value={price}
             onChange={(e) => setPrice(e.target.value)}
-            placeholder="9.99"
+            placeholder="99.00"
             disabled={createProduct.isPending}
             required
           />

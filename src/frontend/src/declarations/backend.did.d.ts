@@ -14,6 +14,41 @@ export type ExtendedRole = { 'admin' : null } |
   { 'customer' : null } |
   { 'guest' : null } |
   { 'vendor' : null };
+export interface Order {
+  'id' : bigint,
+  'status' : OrderStatus,
+  'paymentMethod' : [] | [string],
+  'confirmationText' : [] | [string],
+  'customer' : Principal,
+  'createdAt' : Time,
+  'totalAmount' : bigint,
+  'items' : Array<OrderItem>,
+}
+export interface OrderConfirmation {
+  'status' : OrderStatus,
+  'paymentMethod' : string,
+  'customer' : Principal,
+  'createdAt' : Time,
+  'orderId' : bigint,
+  'message' : string,
+  'totalAmount' : bigint,
+  'items' : Array<OrderItem>,
+}
+export interface OrderItem {
+  'id' : bigint,
+  'name' : string,
+  'isAvailable' : boolean,
+  'productId' : bigint,
+  'imageUrl' : [] | [string],
+  'vendor' : [] | [Principal],
+  'quantity' : bigint,
+  'price' : bigint,
+}
+export type OrderStatus = { 'shipped' : null } |
+  { 'cancelled' : null } |
+  { 'pending' : null } |
+  { 'delivered' : null } |
+  { 'confirmed' : null };
 export interface Product {
   'id' : bigint,
   'name' : string,
@@ -34,15 +69,21 @@ export type UserRole = { 'admin' : null } |
 export interface _SERVICE {
   '_initializeAccessControlWithSecret' : ActorMethod<[string], undefined>,
   'assignCallerUserRole' : ActorMethod<[Principal, UserRole], undefined>,
+  'checkout' : ActorMethod<
+    [Array<[bigint, bigint]>, string],
+    OrderConfirmation
+  >,
   'createProduct' : ActorMethod<
     [string, [] | [string], bigint, [] | [string], [] | [string]],
     bigint
   >,
   'deleteProduct' : ActorMethod<[bigint], undefined>,
+  'getAllOrdersForCustomer' : ActorMethod<[Principal], Array<Order>>,
   'getAllProducts' : ActorMethod<[], Array<Product>>,
   'getCallerRole' : ActorMethod<[], ExtendedRole>,
   'getCallerUserProfile' : ActorMethod<[], [] | [UserProfile]>,
   'getCallerUserRole' : ActorMethod<[], UserRole>,
+  'getOrderById' : ActorMethod<[bigint], [] | [Order]>,
   'getProduct' : ActorMethod<[bigint], [] | [Product]>,
   'getProductsForVendor' : ActorMethod<[Principal], Array<Product>>,
   'getUserProfile' : ActorMethod<[Principal], [] | [UserProfile]>,

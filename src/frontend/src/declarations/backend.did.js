@@ -13,7 +13,44 @@ export const UserRole = IDL.Variant({
   'user' : IDL.Null,
   'guest' : IDL.Null,
 });
+export const OrderStatus = IDL.Variant({
+  'shipped' : IDL.Null,
+  'cancelled' : IDL.Null,
+  'pending' : IDL.Null,
+  'delivered' : IDL.Null,
+  'confirmed' : IDL.Null,
+});
 export const Time = IDL.Int;
+export const OrderItem = IDL.Record({
+  'id' : IDL.Nat,
+  'name' : IDL.Text,
+  'isAvailable' : IDL.Bool,
+  'productId' : IDL.Nat,
+  'imageUrl' : IDL.Opt(IDL.Text),
+  'vendor' : IDL.Opt(IDL.Principal),
+  'quantity' : IDL.Nat,
+  'price' : IDL.Nat,
+});
+export const OrderConfirmation = IDL.Record({
+  'status' : OrderStatus,
+  'paymentMethod' : IDL.Text,
+  'customer' : IDL.Principal,
+  'createdAt' : Time,
+  'orderId' : IDL.Nat,
+  'message' : IDL.Text,
+  'totalAmount' : IDL.Nat,
+  'items' : IDL.Vec(OrderItem),
+});
+export const Order = IDL.Record({
+  'id' : IDL.Nat,
+  'status' : OrderStatus,
+  'paymentMethod' : IDL.Opt(IDL.Text),
+  'confirmationText' : IDL.Opt(IDL.Text),
+  'customer' : IDL.Principal,
+  'createdAt' : Time,
+  'totalAmount' : IDL.Nat,
+  'items' : IDL.Vec(OrderItem),
+});
 export const Product = IDL.Record({
   'id' : IDL.Nat,
   'name' : IDL.Text,
@@ -37,6 +74,11 @@ export const UserProfile = IDL.Record({ 'name' : IDL.Text });
 export const idlService = IDL.Service({
   '_initializeAccessControlWithSecret' : IDL.Func([IDL.Text], [], []),
   'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
+  'checkout' : IDL.Func(
+      [IDL.Vec(IDL.Tuple(IDL.Nat, IDL.Nat)), IDL.Text],
+      [OrderConfirmation],
+      [],
+    ),
   'createProduct' : IDL.Func(
       [
         IDL.Text,
@@ -49,10 +91,16 @@ export const idlService = IDL.Service({
       [],
     ),
   'deleteProduct' : IDL.Func([IDL.Nat], [], []),
+  'getAllOrdersForCustomer' : IDL.Func(
+      [IDL.Principal],
+      [IDL.Vec(Order)],
+      ['query'],
+    ),
   'getAllProducts' : IDL.Func([], [IDL.Vec(Product)], ['query']),
   'getCallerRole' : IDL.Func([], [ExtendedRole], ['query']),
   'getCallerUserProfile' : IDL.Func([], [IDL.Opt(UserProfile)], ['query']),
   'getCallerUserRole' : IDL.Func([], [UserRole], ['query']),
+  'getOrderById' : IDL.Func([IDL.Nat], [IDL.Opt(Order)], ['query']),
   'getProduct' : IDL.Func([IDL.Nat], [IDL.Opt(Product)], ['query']),
   'getProductsForVendor' : IDL.Func(
       [IDL.Principal],
@@ -77,7 +125,44 @@ export const idlFactory = ({ IDL }) => {
     'user' : IDL.Null,
     'guest' : IDL.Null,
   });
+  const OrderStatus = IDL.Variant({
+    'shipped' : IDL.Null,
+    'cancelled' : IDL.Null,
+    'pending' : IDL.Null,
+    'delivered' : IDL.Null,
+    'confirmed' : IDL.Null,
+  });
   const Time = IDL.Int;
+  const OrderItem = IDL.Record({
+    'id' : IDL.Nat,
+    'name' : IDL.Text,
+    'isAvailable' : IDL.Bool,
+    'productId' : IDL.Nat,
+    'imageUrl' : IDL.Opt(IDL.Text),
+    'vendor' : IDL.Opt(IDL.Principal),
+    'quantity' : IDL.Nat,
+    'price' : IDL.Nat,
+  });
+  const OrderConfirmation = IDL.Record({
+    'status' : OrderStatus,
+    'paymentMethod' : IDL.Text,
+    'customer' : IDL.Principal,
+    'createdAt' : Time,
+    'orderId' : IDL.Nat,
+    'message' : IDL.Text,
+    'totalAmount' : IDL.Nat,
+    'items' : IDL.Vec(OrderItem),
+  });
+  const Order = IDL.Record({
+    'id' : IDL.Nat,
+    'status' : OrderStatus,
+    'paymentMethod' : IDL.Opt(IDL.Text),
+    'confirmationText' : IDL.Opt(IDL.Text),
+    'customer' : IDL.Principal,
+    'createdAt' : Time,
+    'totalAmount' : IDL.Nat,
+    'items' : IDL.Vec(OrderItem),
+  });
   const Product = IDL.Record({
     'id' : IDL.Nat,
     'name' : IDL.Text,
@@ -101,6 +186,11 @@ export const idlFactory = ({ IDL }) => {
   return IDL.Service({
     '_initializeAccessControlWithSecret' : IDL.Func([IDL.Text], [], []),
     'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
+    'checkout' : IDL.Func(
+        [IDL.Vec(IDL.Tuple(IDL.Nat, IDL.Nat)), IDL.Text],
+        [OrderConfirmation],
+        [],
+      ),
     'createProduct' : IDL.Func(
         [
           IDL.Text,
@@ -113,10 +203,16 @@ export const idlFactory = ({ IDL }) => {
         [],
       ),
     'deleteProduct' : IDL.Func([IDL.Nat], [], []),
+    'getAllOrdersForCustomer' : IDL.Func(
+        [IDL.Principal],
+        [IDL.Vec(Order)],
+        ['query'],
+      ),
     'getAllProducts' : IDL.Func([], [IDL.Vec(Product)], ['query']),
     'getCallerRole' : IDL.Func([], [ExtendedRole], ['query']),
     'getCallerUserProfile' : IDL.Func([], [IDL.Opt(UserProfile)], ['query']),
     'getCallerUserRole' : IDL.Func([], [UserRole], ['query']),
+    'getOrderById' : IDL.Func([IDL.Nat], [IDL.Opt(Order)], ['query']),
     'getProduct' : IDL.Func([IDL.Nat], [IDL.Opt(Product)], ['query']),
     'getProductsForVendor' : IDL.Func(
         [IDL.Principal],

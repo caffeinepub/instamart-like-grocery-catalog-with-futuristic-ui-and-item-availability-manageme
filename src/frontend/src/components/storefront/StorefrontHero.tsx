@@ -32,8 +32,8 @@ export default function StorefrontHero() {
           <div className="relative">
             <div className="absolute inset-0 bg-gradient-to-tr from-primary/20 to-accent/20 blur-3xl" />
             <img 
-              src="/assets/generated/instamart-hero.dim_1600x900.png" 
-              alt="MyLocal Kart - Local marketplace hero" 
+              src="/assets/generated/mylocal-kart-groceries-hero.dim_1600x900.jpg" 
+              alt="MyLocal Kart - Fresh groceries and local marketplace" 
               className="relative w-full h-auto rounded-lg shadow-2xl neon-glow"
             />
           </div>

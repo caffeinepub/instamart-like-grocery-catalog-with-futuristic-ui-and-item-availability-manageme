@@ -8,6 +8,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Trash2, AlertCircle, Package } from 'lucide-react';
 import { toast } from 'sonner';
 import ConfirmDialog from '../admin/ConfirmDialog';
+import { formatINR } from '../../utils/currency';
 
 export default function VendorProductTable() {
   const { data: products, isLoading, error } = useGetVendorProducts();
@@ -106,7 +107,7 @@ export default function VendorProductTable() {
                   </div>
                 </TableCell>
                 <TableCell>
-                  ${(Number(product.price) / 100).toFixed(2)}
+                  {formatINR(product.price)}
                   {product.unitLabel && (
                     <span className="text-muted-foreground text-sm">
                       {' '}/ {product.unitLabel}

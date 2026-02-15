@@ -1,14 +1,19 @@
 {
   "schemaVersion": "1.0.0",
-  "projectStateVersion": 7,
-  "summary": "Build \"MyLocal Kart\" — an Instamart-like grocery delivery/catalog app with a unique futuristic UI, including separate public vs vendor logins and a vendor portal to upload/manage products, with item availability (online/offline) based on stock.",
+  "projectStateVersion": 21,
+  "summary": "Build \"MyLocal Kart\" — an Instamart-like grocery delivery/catalog app with a unique futuristic UI, including separate public vs vendor logins and a vendor portal to upload/manage products, with item availability (online/offline) based on stock, plus customer checkout with an online payment option.",
   "architectural_notes": [
-    "Expand authorization model from single admin/owner to role-based access (public/customer vs vendor) with vendor-scoped catalog mutations via a vendor portal."
+    "Expand authorization model from single admin/owner to role-based access (public/customer vs vendor) with vendor-scoped catalog mutations via a vendor portal.",
+    "Standardize currency handling (store numeric prices; format display as INR with appropriate locale) so pricing is consistent across storefront, product cards, and management UIs.",
+    "Plan/implement an online payment checkout flow (payment method selection + gateway integration) for customer transactions."
   ],
   "known_issues": [
-    "Stray/legacy “Instamart”/“InstaMart” text may still appear in some UI/metadata; ensure all user-facing naming is consistently “MyLocal Kart” everywhere (including titles, alt text, footers, etc.)."
+    "Stray/legacy “Instamart”/“InstaMart” text may still appear in some UI/metadata; ensure all user-facing naming is consistently “MyLocal Kart” everywhere (including titles, alt text, footers, etc.).",
+    "Logo/hero image asset placement needs to be aligned: uploaded image should be used on the front screen (hero), and the other image should be used as the top-left app logo; ensure logo name text reads “MyLocal Kart” consistently.",
+    "User-provided template uses the HTML <title> “MyLocal App - Groceries Delivered Locally”, which conflicts with current branding/project name “MyLocal Kart”; clarify whether to keep exact title or rebrand consistently."
   ],
-  "isFixRequest": true,
+  "isFixRequest": false,
+  "imageRequirements": "## Required Images\n- Futuristic grocery-themed monogram/logo mark with neon-green accents on dark background (mylocal-kart-logo-v2.dim_256x256.png)",
   "existing_features": [
     {
       "id": "feature-create-a-coherent-unique-futuristic-visual-theme-for-the-app-colors-typography-spacing-component-styling-and-apply-it-consistently-across-all-screens-using-tailwind-css",
@@ -81,6 +86,110 @@
         "REQ-13"
       ],
       "version": 1
+    },
+    {
+      "id": "feature-update-all-product-price-displays-across-the-storefront-admin-and-vendor-uis-to-format-amounts-as-inr-indian-rupee-instead-of-usd-using-a-consistent-currency-formatter-e-g-locale-aware-formatting-while-keeping-the-stored-price-value-unchanged-still-treated-as-the-smallest-unit-used-by-the-app-currently-price-100-in-ui",
+      "title": "Update all product price displays across the storefront, admin, and vendor UIs to format amounts as INR (Indian Rupee) instead of USD, using a consistent currency formatter (e.g., locale-aware formatting) while keeping the stored price value unchanged (still treated as the smallest unit used by the app, currently price/100 in UI).",
+      "reqIds": [
+        "REQ-14"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-all-product-creation-forms-admin-and-vendor-to-use-inr-in-user-facing-labels-placeholders-help-text-for-the-price-field-and-ensure-validation-error-messages-remain-in-english-and-do-not-reference-usd",
+      "title": "Update all product creation forms (admin and vendor) to use INR in user-facing labels/placeholders/help text for the price field, and ensure validation/error messages remain in English and do not reference USD.",
+      "reqIds": [
+        "REQ-15"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-the-two-user-uploaded-images-as-static-frontend-assets-under-frontend-public-assets-generated-producing-appropriately-sized-optimized-variants-for-a-top-left-logo-and-a-storefront-hero-image",
+      "title": "Add the two user-uploaded images as static frontend assets under frontend/public/assets/generated, producing appropriately sized/optimized variants for a top-left logo and a storefront hero image.",
+      "reqIds": [
+        "REQ-16"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-the-header-top-left-logo-to-use-the-uploaded-logo-image-derived-from-gemini-generated-image-819qqi819qqi819q-png-and-ensure-the-displayed-brand-text-reads-exactly-mylocal-kart",
+      "title": "Update the header top-left logo to use the uploaded logo image (derived from Gemini_Generated_Image_819qqi819qqi819q.png) and ensure the displayed brand text reads exactly “MyLocal Kart”.",
+      "reqIds": [
+        "REQ-17"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-the-storefront-front-screen-hero-image-to-use-the-uploaded-hero-image-derived-from-images-jpeg-instead-of-the-existing-instamart-hero-asset",
+      "title": "Update the storefront front-screen (hero) image to use the uploaded hero image (derived from images.jpeg) instead of the existing instamart hero asset.",
+      "reqIds": [
+        "REQ-18"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-a-customer-shopping-cart-and-checkout-ui-to-the-storefront-so-customers-can-select-products-review-an-order-summary-items-quantities-subtotal-total-in-inr-and-proceed-to-payment",
+      "title": "Add a customer shopping cart and checkout UI to the storefront so customers can select products, review an order summary (items, quantities, subtotal/total in INR), and proceed to payment.",
+      "reqIds": [
+        "REQ-19"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-show-an-explicit-payment-method-choice-at-checkout-that-includes-an-online-payment-option-and-allow-completing-the-transaction-using-that-option-within-the-app-s-current-constraints",
+      "title": "Show an explicit payment method choice at checkout that includes an \"Online Payment\" option, and allow completing the transaction using that option (within the app’s current constraints).",
+      "reqIds": [
+        "REQ-20"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-the-app-s-root-html-document-frontend-index-html-to-match-the-user-provided-template-structure-and-head-content-including-charset-viewport-meta-tags-the-exact-document-title-text-mylocal-app-groceries-delivered-locally-the-google-fonts-link-for-space-grotesk-with-weights-300-700-and-the-exact-importmap-block-with-the-provided-import-entries",
+      "title": "Update the app’s root HTML document (frontend/index.html) to match the user-provided template structure and head content, including: charset + viewport meta tags, the exact document title text \"MyLocal App - Groceries Delivered Locally\", the Google Fonts link for \"Space Grotesk\" with weights 300–700, and the exact importmap block with the provided import entries.",
+      "reqIds": [
+        "REQ-22"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-the-user-provided-global-styling-and-utility-classes-in-the-app-s-global-css-tailwind-setup-so-the-ui-can-use-the-same-visual-primitives-as-the-template-body-font-set-to-space-grotesk-with-background-color-0a0f0d-and-foreground-text-color-f8fafc-plus-css-utilities-classes-equivalent-to-glass-brand-shadow-green-brand-shadow-orange-and-scrollbar-hide-including-webkit-and-non-webkit-behavior",
+      "title": "Implement the user-provided global styling and utility classes in the app’s global CSS/Tailwind setup so the UI can use the same visual primitives as the template: body font set to Space Grotesk with background color #0a0f0d and foreground text color #f8fafc, plus CSS utilities/classes equivalent to .glass, .brand-shadow-green, .brand-shadow-orange, and .scrollbar-hide (including webkit and non-webkit behavior).",
+      "reqIds": [
+        "REQ-23"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-frontend-index-html-to-match-the-user-provided-html-template-head-structure-and-resources-specifically-adding-the-tailwind-cdn-script-tag-script-src-https-cdn-tailwindcss-com-script-while-preserving-the-existing-react-entrypoint-script-type-module-src-src-main-tsx-script-so-the-app-continues-to-load",
+      "title": "Update frontend/index.html to match the user-provided HTML template head structure and resources, specifically adding the Tailwind CDN script tag (<script src=\"https://cdn.tailwindcss.com\"></script>) while preserving the existing React entrypoint (<script type=\"module\" src=\"/src/main.tsx\"></script>) so the app continues to load.",
+      "reqIds": [
+        "REQ-24"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-a-new-groceries-themed-hero-image-as-a-static-asset-under-frontend-public-assets-generated-and-update-the-storefront-main-page-hero-to-use-this-new-groceries-image-instead-of-the-current-hero-image",
+      "title": "Add a new groceries-themed hero image as a static asset under frontend/public/assets/generated, and update the storefront main page hero to use this new groceries image instead of the current hero image.",
+      "reqIds": [
+        "REQ-25"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-replace-the-current-header-logo-image-with-a-new-static-logo-asset-and-keep-the-displayed-brand-text-as-exactly-mylocal-kart",
+      "title": "Replace the current header logo image with a new static logo asset, and keep the displayed brand text as exactly “MyLocal Kart”.",
+      "reqIds": [
+        "REQ-26"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-make-the-header-logo-symbol-clickable-so-that-when-the-user-is-not-authenticated-clicking-the-logo-opens-a-small-login-chooser-that-lets-the-user-select-either-customer-or-vendor-mode-and-then-initiate-login-for-the-selected-mode",
+      "title": "Make the header logo symbol clickable so that when the user is not authenticated, clicking the logo opens a small login chooser that lets the user select either Customer or Vendor mode and then initiate login for the selected mode.",
+      "reqIds": [
+        "REQ-27"
+      ],
+      "version": 1
     }
   ],
   "new_feature_requests": [
@@ -144,6 +253,50 @@
       "reqIds": [
         "REQ-12"
       ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-14",
+      "summary": "Change product pricing display/formatting to INR (Indian Rupee) throughout the app.",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-15",
+      "summary": "Update branding/assets usage: ensure the logo name text is “MyLocal Kart”, use the uploaded image as the front/hero screen image, and use the other image as the app logo at the top-left.",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-16",
+      "summary": "Add a customer payment/checkout flow with an online payment option shown in the UI for completing transactions.",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-19",
+      "summary": "Implement backend support for creating and storing customer orders that record the selected payment method as online, validate product availability at time of purchase, and return an order confirmation payload usable by the frontend.",
+      "reqIds": [
+        "REQ-21"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-20",
+      "summary": "Match the app’s base HTML shell to the user-provided template (document head/title, Tailwind CDN usage, Space Grotesk font, global glass/scrollbar CSS, and the specified importmap entries).",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-21",
+      "summary": "Update the main/storefront page hero image to a groceries-themed image (replace the current main page image).",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-22",
+      "summary": "Update header logo behavior: clicking the logo/symbol should present login options for both Customer and Vendor (mode selector via logo click) and update/replace the app logo image accordingly.",
+      "reqIds": [],
       "status": "pending"
     }
   ],

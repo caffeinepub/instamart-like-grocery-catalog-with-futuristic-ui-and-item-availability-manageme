@@ -1,11 +1,11 @@
 # Specification
 
 ## Summary
-**Goal:** Remove any remaining “Instamart”/“InstaMart” wording and ensure the app consistently displays “MyLocal Kart” branding across the entire frontend.
+**Goal:** Update the header branding by replacing the logo image and, when logged out, let users choose Customer or Vendor login by clicking the logo symbol.
 
 **Planned changes:**
-- Audit all user-facing frontend copy and replace any occurrences of “Instamart”/“InstaMart” with “MyLocal Kart” (including headings, buttons, helper text, empty states, dialogs, toasts, etc.).
-- Update user-visible metadata (e.g., HTML document title) to use “MyLocal Kart”.
-- Update user-facing accessibility text (alt text, aria-labels, and similar labels) to ensure it uses “MyLocal Kart” and never “Instamart”/“InstaMart”.
+- Add and use a new static header logo image asset (while keeping the visible brand text exactly “MyLocal Kart” and updating the logo image alt text to reference “MyLocal Kart”).
+- Make the header logo symbol clickable when logged out to open a small login chooser with “Customer” and “Vendor” options and an English login call-to-action that triggers the existing Internet Identity login flow using the selected mode.
+- Remove or hide the existing standalone header ModeSelector when logged out so mode selection primarily happens via the logo click; ensure normal behavior is not blocked when logged in.
 
-**User-visible outcome:** Users navigating the app as any role only see “MyLocal Kart” in the UI, titles/metadata, and accessible labels, with no “Instamart”/“InstaMart” appearing anywhere.
+**User-visible outcome:** When logged out, clicking the logo symbol opens a chooser to log in as Customer or Vendor; the header shows the new logo image with brand text “MyLocal Kart”.
